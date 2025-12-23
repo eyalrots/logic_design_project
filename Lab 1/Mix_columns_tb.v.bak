@@ -1,0 +1,31 @@
+`timescale 1ns / 1ps
+module Mix_columns_tb;
+    localparam DIM = 4;
+    localparam WIDTH = 8;
+
+    reg clk;
+    reg [WIDTH-1:0] mat_p [DIM-1:0][DIM-1:0];   // from Plaintext
+    wire [WIDTH-1:0] mat_c [DIM-1:0][DIM-1:0]; // from Ciphertext
+
+    initial begin
+        mat_p = '{
+        '{8'hD4, 8'hE0, 8'hB8, 8'h1E}, // Row 0
+        '{8'hBF, 8'hB4, 8'h41, 8'h27}, // Row 1
+        '{8'h5D, 8'h52, 8'h11, 8'h98}, // Row 2
+        '{8'h30, 8'hAE, 8'hF1, 8'hE5}  // Row 3
+        };
+        #500
+        $display("Input:  %p", mat_p);
+        $display("Output: %0", mat_c);
+        
+        // Stop the simulation
+        //$finish;
+
+    end
+
+    Mix_columns u_dut (   
+        .mat_i(mat_p),
+        .mat_o(mat_c)
+    );
+
+endmodule
