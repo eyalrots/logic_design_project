@@ -4,26 +4,35 @@ module fsm #(
 ) (
     input clk_i, rst_i,
     input [DIM*DIM*WIDTH-1:0] vec_i,
-    output wire [WIDTH-1:0] sb_out [DIM-1:0][DIM-1:0],
+    output wire done_out,
     output wire [WIDTH-1:0] mix_out [DIM-1:0][DIM-1:0]
 );
 
-    // type definitions:
+    // ---------------------------
+    //      type definitions:
+    // ---------------------------
     typedef reg [WIDTH-1:0] matrix_t [DIM-1:0][DIM-1:0];
+    typedef wire [WIDTH-1:0] matrix_w_t [DIM-1:0][DIM-1:0];
 
-    // parameters and variables:
+    // ---------------------------
+    //  parameters and variables:
+    // ---------------------------
+    // parameters:
     parameter [1:0] RESET  = 2'b00,
                     CASE_1 = 2'b01,
                     CASE_2 = 2'b10,
                     CASE_3 = 2'b11;
+    // registers:
+    reg [1:0] state, next, done;
+    matrix_t sb_mat, mix_mat_r;
 
-    reg [1:0] state, next;
+    // wires:
+    matrix_w_t mix_mat;
+    wire [WIDTH*DIM*DIM-1:0] sb_vec, shifted;
 
-    matrix_t sb_mat_1, sb_mat_2, mix_mat;
-
-    reg [WIDTH*DIM*DIM-1:0] sb_vec_1, sb_vec_2, shifted_1, shifted_2;
-
-    // functions and module calls:
+    // ---------------------------
+    //         functions:
+    // ---------------------------
     function automatic matrix_t vec2mat (input reg [WIDTH*DIM*DIM-1:0] vec);
         matrix_t mat_r;
         int bit_idx = 0;
@@ -38,34 +47,31 @@ module fsm #(
         return mat_r;
     endfunction
 
-
-    subBytes sub_byte_1 (
+    // ---------------------------
+    //          Modules:
+    // ---------------------------
+    subBytes sub_byte (
         .in(vec_i),
-        .out(sb_vec_1)
-    );
-    ShiftRows shift_1 (
-        .Text_In_T(sb_vec_1),
-        .Out_Text_T(shifted_1)
+        .out(sb_vec)
     );
 
-    subBytes sub_byte_2 (
-        .in(vec_i),
-        .out(sb_vec_2)
-    );
-    ShiftRows shift_2 (
-        .Text_In_T(sb_vec_2),
-        .Out_Text_T(shifted_2)
+    ShiftRows shift (
+        .Text_In_T(sb_vec),
+        .Out_Text_T(shifted)
     );
 
     Mix_columns #(
         .DIM(DIM), .WIDTH(WIDTH)
     ) mix_cols (
-        .mat_i(sb_mat_2),
+        .mat_i(sb_mat),
         .mat_o(mix_mat)
     );
 
-    // state update for FSM on clk / rst:
-    always_ff @(posedge clk_i, negedge rst_i) begin
+    // ---------------------------
+    //           FSM:
+    // ---------------------------
+    // state update for FSM on clk:
+    always_ff @(posedge clk_i) begin
         if (rst_i)
             state <= RESET;
         else
@@ -76,13 +82,16 @@ module fsm #(
     always @(state) begin
         case (state)
         RESET: begin
+            next = CASE_1;
+        end
+        CASE_1: begin
             next = CASE_2;
         end
         CASE_2: begin
             next = CASE_3;
         end
         CASE_3: begin
-            next = RESET;
+            next = CASE_3;
         end
         default: begin
             next = RESET;
@@ -90,19 +99,22 @@ module fsm #(
         endcase
     end
 
-    // output registers
-    // --- registered output ---
+    // registers - synchronized part of FSM
     always_ff @(posedge clk_i) begin
         case (state)
         RESET: begin
-            sb_mat_1 <= vec2mat('0);
-            sb_mat_2 <= vec2mat('0);
+            sb_mat    <= vec2mat('0);
+            mix_mat_r <= vec2mat('0);
+            done      <= 1'b0;
+        end
+        CASE_1: begin
+            sb_mat    <= vec2mat(shifted);
         end
         CASE_2: begin
-            sb_mat_1 <= vec2mat(shifted_1);
+            mix_mat_r <= mix_mat;
         end
         CASE_3: begin
-            sb_mat_2 <= vec2mat(shifted_2);
+            done      <= 1'b1;
         end
         default: begin
             sb_mat_1 <= vec2mat('0);
@@ -111,9 +123,8 @@ module fsm #(
         endcase
     end
 
-    // case 2 output:
-    assign sb_out  = sb_mat_1;
-    // case 3 output:
-    assign mix_out = mix_mat;
+    // output assignment
+    assign mix_out  = done ? mix_mat_r : '0;
+    assign done_out = done;
         
 endmodule
