@@ -22,6 +22,16 @@ logic done;
 logic [127:0] vector;
 miatrix_t result;
 
+// golden model
+localparam N = 15;
+logic [WIDTH*DIM*DIM-1:0] golden_model [0:N-1];
+logic [WIDTH*DIM*DIM-1:0] correct_mix_out;
+logic is_mistake;
+
+initial begin
+    $readmemb("golden_model_out.memb", golden_model)
+end
+
 // instnatiate DUT
 fsm dut ( .clk_i(clk), .rst_i(rst), .vec_i(vector), .mix_out(result), .done(done));
 
@@ -56,14 +66,19 @@ initial begin
 
     /* randomized tests */
     $disable("Starting random test...");
-    for (i = 0; i < 15; i++) begin
-        if (!std::randomized(vector)) begin
-            $error("Randomization failed.");
-        end
+    for (i = 0; i < N; i++) begin
+        vector = {$urandom(),$urandom(),$urandom(),$urandom()};
         $disable("Sending random vector %0d: &h", i, vector);
         send_transaction(vector);
         repeat (2) @(posedge clk);
         wait(done);
+        is_mistake = (correct_mix_out != result);
+        if (is_mistake) begin
+            failed = failed +1;
+        end
+        else begin
+            passed = passed +1
+        end
         @(posedge clk);
     end
 
