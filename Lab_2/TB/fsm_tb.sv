@@ -12,9 +12,9 @@ always #5 clk = ~clk;
 
 // rst gennerator
 initial begin
-    rst_n = 1;
+    rst = 1;
     repeat (2) @(posedge clk);
-    rst_n = 0;
+    rst = 0;
 end
 
 // interface to DUT (device under test)
@@ -75,25 +75,36 @@ end
 //   Assersions
 // --------------
 
-// done can only be asserted when FSM is DONE
-property done_only_when_done;
+/* When in RESET all outputs / registers must be 0 */
+property check_reset_clears_output;
     @(posedge clk);
     disable iff (!rst);
-    done |-> (dut.state == dut.S_DONE);
+    (dut.state == dut.RESET) |-> (dut.mix_out == '0 && dut.done_out == 0);
 endproperty
 
-assert property (done_only_when_done)
-    else $error("done asserted outside S_DONE state.");
+assert property (check_reset_clears_output)
+    else $error("[Assertion failed] Outputs are not 0 during RESET state.");
 
-// result must be valid (not X) when done is high
-property result_valid;
+/* When done is high state shoud be CASE_3 */
+property check_done_on_case_3;
     @(posedge clk);
     disable iff (!rst);
-    done |-> !$isunknown(result);
+    dut.done_out |-> (dut.state == dut.CASE_3);
 endproperty
 
-assert property (result_valid);
-    else $error("result invalid when done asserted.");
+assert property (check_done_on_case_3)
+    else $error("[Assertion failed] 'done' is high, but FSM is not in CASE_3.");
+
+/* After state CASE_2 should come state CASE_3 */
+property check_fsm_transition;
+    @(posedge clk);
+    disable iff (!rst);
+    (dut.state == dut.CASE_2) |=> (dut.state == dut.CASE_3);
+endproperty
+
+assert property (check_fsm_transition)
+    else $error("[Assertion failed] FSM did not transition from CASE_2 to CASE_3.");
+
 
 // ------------
 //   Coverage
