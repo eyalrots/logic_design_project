@@ -12,7 +12,6 @@ module fsm #(
     //      type definitions:
     // ---------------------------
     typedef reg [WIDTH-1:0] matrix_t [DIM-1:0][DIM-1:0];
-    typedef wire [WIDTH-1:0] matrix_w_t [DIM-1:0][DIM-1:0];
 
     // ---------------------------
     //  parameters and variables:
@@ -22,12 +21,13 @@ module fsm #(
                     CASE_1 = 2'b01,
                     CASE_2 = 2'b10,
                     CASE_3 = 2'b11;
+    localparam matrix_t zero_mat = '{default: '{default: '0}};
     // registers:
     reg [1:0] state, next, done;
     matrix_t sb_mat, mix_mat_r;
 
     // wires:
-    matrix_w_t mix_mat;
+    wire [WIDTH-1:0] mix_mat [DIM-1:0][DIM-1:0];
     wire [WIDTH*DIM*DIM-1:0] sb_vec, shifted;
 
     // ---------------------------
@@ -117,14 +117,15 @@ module fsm #(
             done      <= 1'b1;
         end
         default: begin
-            sb_mat_1 <= vec2mat('0);
-            sb_mat_2 <= vec2mat('0);
+            sb_mat    <= vec2mat('0);
+            mix_mat_r <= vec2mat('0);
+            done      <= 1'b0;
         end
         endcase
     end
 
     // output assignment
-    assign mix_out  = done ? mix_mat_r : '0;
+    assign mix_out  = done ? mix_mat_r : zero_mat;
     assign done_out = done;
         
 endmodule

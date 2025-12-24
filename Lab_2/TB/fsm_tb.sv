@@ -4,7 +4,7 @@ module tb_top;
 
 typedef logic [WIDTH-1:0] matrix_t [DIM-1:0][DIM-1:0];
 
-logic clk, rst_n;
+logic clk, rst;
 
 // clk generator
 initial clk = 0;
@@ -23,7 +23,7 @@ logic [127:0] vector;
 miatrix_t result;
 
 // instnatiate DUT
-fsm dut ( .clk(clk), .rst_n(rst_n), .vec_i(vector), .mix_out(result), .done(done));
+fsm dut ( .clk_i(clk), .rst_i(rst), .vec_i(vector), .mix_out(result), .done(done));
 
 // scoreboard
 int passed = 0;
@@ -49,24 +49,23 @@ endtask;
 // -------------
 initial begin
     a = 0; b = 0;
+    vector = '0;
+    int i;
 
-    @(negedge rst_n)
+    @(negedge rst)
 
-    /* Find out how to generate vectors!!! */
-    
-    /* 
-    send_transaction(3, 4);
-    wait(done);
-    @(posedge clk);
-
-    send_transaction(7, 9);
-    wait(done);
-    @(posedge clk);
-
-    send_transaction(15, 15);
-    wait(done);
-    @(posedge clk);
-    */
+    /* randomized tests */
+    $disable("Starting random test...");
+    for (i = 0; i < 15; i++) begin
+        if (!std::randomized(vector)) begin
+            $error("Randomization failed.");
+        end
+        $disable("Sending random vector %0d: &h", i, vector);
+        send_transaction(vector);
+        repeat (2) @(posedge clk);
+        wait(done);
+        @(posedge clk);
+    end
 
     $display("TEST FINISHED!");
     $finish;
@@ -79,7 +78,7 @@ end
 // done can only be asserted when FSM is DONE
 property done_only_when_done;
     @(posedge clk);
-    disable iff (!rst_n);
+    disable iff (!rst);
     done |-> (dut.state == dut.S_DONE);
 endproperty
 
@@ -89,7 +88,7 @@ assert property (done_only_when_done)
 // result must be valid (not X) when done is high
 property result_valid;
     @(posedge clk);
-    disable iff (!rst_n);
+    disable iff (!rst);
     done |-> !$isunknown(result);
 endproperty
 
@@ -101,19 +100,19 @@ assert property (result_valid);
 // ------------
 covergroup fsm_states @(posedge clk);
     coverpoint dut.state {
-        bins idle = {dut.S_IDLE};
-        bins load = {dut.S_LOAD};
-        bins add  = {dut.S_ADD};
-        bins done = {dut.S_DONE};
+        bins reset_fsm  = {dut.RESET};
+        bins case_1_fsm = {dut.CASE_1};
+        bins case_2_fsm = {dut.CASE_2};
+        bins case_3_fsm = {dut.CASE_3};
     }
 endgroup
 
 covergroup fsm_transitions @(posedge clk);
     coverpoint dut.state {
-        bins idle_to_load = (dut.S_IDLE => dut.S_LOAD);
-        bins load_to_add  = (dut.S_LOAD => dut.S_ADD);
-        bins add_to_done  = (dut.S_ADD  => dut.S_DONE);
-        bins done_to_idle = (dut.S_DONE => dut.S_IDLE);
+        bins reset_to_case_1   = (dut.RESET  => dut.CASE_1);
+        bins case_1_to_case_2  = (dut.CASE_1 => dut.CASE_2);
+        bins case_2_to_case_3  = (dut.CASE_2 => dut.CASE_3);
+        bins case_3_to_reset   = (dut.CASE_3 => dut.RESET);
     }
 endgroup
 
