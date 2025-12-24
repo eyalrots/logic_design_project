@@ -6,7 +6,7 @@ module fsm_tb;
     // type definitions:
     typedef logic [WIDTH-1:0] matrix_t [DIM-1:0][DIM-1:0];
 
-    logic clk, rst;
+    logic clk, rst , done;
     logic [WIDTH*DIM*DIM-1:0] vec_i_tb;   // from Plaintext
     matrix_t mix_out_tb, sb_out_tb;
 
@@ -38,7 +38,7 @@ module fsm_tb;
         .rst_i(rst),  
         .vec_i(vec_i_tb),
         .mix_out(mix_out_tb),
-        .sb_out(sb_out_tb)
+        .done_o(done)
     );
 
 endmodule
