@@ -12,7 +12,7 @@
     * CASE_2: saves the `mix_columns` calculation to the appropriate register - `mix_mat_r`.
     * CASE_3: Idle state for `done` and for stabilizing the output.
 * The output data is conditioned by `done` being high as can be seeing in the code:
- ```verilog
+ ```systemverilog
  assign mix_out = done ? mix_mat_r : zero_mat;
 ```
 In which `zero_mat` is just a matrix of zeros.
