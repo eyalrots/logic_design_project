@@ -36,7 +36,7 @@ In which `zero_mat` is just a matrix of zeros.
         else $error("[Assersion failed] Outputs are not 0 during RESET state.");
     ```
     * Coverage: This part is similar to the Assersions, it check the FSM behaviour by counting how many times the system was in each `state` and how many transisions happened between states. This helps us understand is the synchronous behaviuor of the `FSM` is met. Here is a code example:
-    ```verilog
+    ```systemverilog
     covergroup fsm_transitions @(posedge clk);
         coverpoint but.state {
             bins reset_to_case_1 = (dut.RESET => dut.CASE_1);
