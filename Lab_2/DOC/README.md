@@ -26,7 +26,7 @@ In which `zero_mat` is just a matrix of zeros.
 * It encorporates several verification technics:
     * BFM: here we insert `random` vectors as inouts to the main `dut` module and test the output againsts the `golden model` anticipated output. We also track our successes and fails with relation to the `goldem model`.
     * Assertions: Here we check specific conditions to see if our`FSM` logic behaves as expected. an example:
-    ```verilog
+    ```systemverilog
     property check_reset_clears_output;
         @(posedge clk)
         (dut.state == dut.RESET) |=> (dut.mix_out == zero_mat && dut.done_out == 0);
