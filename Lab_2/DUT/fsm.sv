@@ -23,7 +23,8 @@ module fsm #(
                     CASE_3 = 2'b11;
     localparam matrix_t zero_mat = '{default: '{default: '0}};
     // registers:
-    reg [1:0] state, next, done;
+    reg [1:0] state, next;
+    reg done;
     matrix_t sb_mat, mix_mat_r;
 
     // wires:
@@ -105,7 +106,7 @@ module fsm #(
         RESET: begin
             sb_mat    <= vec2mat('0);
             mix_mat_r <= vec2mat('0);
-            done      <= 1'b0;
+            done      <= 0;
         end
         CASE_1: begin
             sb_mat    <= vec2mat(shifted);
@@ -114,12 +115,12 @@ module fsm #(
             mix_mat_r <= mix_mat;
         end
         CASE_3: begin
-            done      <= 1'b1;
+            done      <= 1;
         end
         default: begin
             sb_mat    <= vec2mat('0);
             mix_mat_r <= vec2mat('0);
-            done      <= 1'b0;
+            done      <= 0;
         end
         endcase
     end

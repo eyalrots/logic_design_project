@@ -2,7 +2,11 @@
 
 module tb_top;
 
+localparam WIDTH = 8, DIM = 4;
+
 typedef logic [WIDTH-1:0] matrix_t [DIM-1:0][DIM-1:0];
+
+localparam matrix_t zero_mat = '{default: '{default: '0}};
 
 logic clk, rst;
 
@@ -20,20 +24,34 @@ end
 // interface to DUT (device under test)
 logic done;
 logic [127:0] vector;
-miatrix_t result;
+matrix_t result;
+
+function automatic matrix_t vec2mat (input logic [WIDTH*DIM*DIM-1:0] vec);
+    matrix_t mat_r;
+    int bit_idx = 0;
+    
+    for (int i = 0; i < DIM; i++) begin
+        for (int j = 0; j < DIM; j++) begin
+            mat_r[i][j] = vec[bit_idx +: WIDTH];
+            bit_idx = bit_idx + WIDTH;
+        end
+    end
+    
+    return mat_r;
+endfunction
 
 // golden model
-localparam N = 15;
+localparam N = 17;
 logic [WIDTH*DIM*DIM-1:0] golden_model [0:N-1];
-logic [WIDTH*DIM*DIM-1:0] correct_mix_out;
+matrix_t correct_mix_out;
 logic is_mistake;
 
 initial begin
-    $readmemb("golden_model_out.memb", golden_model)
+    $readmemb("/users_home/eyalroth/Lab_2/TB/golden_model_questa_out.memb", golden_model);
 end
 
 // instnatiate DUT
-fsm dut ( .clk_i(clk), .rst_i(rst), .vec_i(vector), .mix_out(result), .done(done));
+fsm dut ( .clk_i(clk), .rst_i(rst), .vec_i(vector), .mix_out(result), .done_out(done));
 
 // scoreboard
 int passed = 0;
@@ -51,33 +69,41 @@ task automatic send_transaction(input [127:0] vec_i);
     // FSM samples here
     @(posedge clk);
     rst = 1'b0;
-endtask;
+endtask
 
 
 // -------------
 // test sequnce
 // -------------
 initial begin
-    a = 0; b = 0;
-    vector = '0;
     int i;
+    vector = '0;
 
-    @(negedge rst)
+    @(negedge rst);
 
     /* randomized tests */
-    $disable("Starting random test...");
+    $display("Starting random test...");
     for (i = 0; i < N; i++) begin
-        vector = {$urandom(),$urandom(),$urandom(),$urandom()};
-        $disable("Sending random vector %0d: &h", i, vector);
+        if (i == 15) begin
+            vector = '0;
+        end
+        else if (i == 16) begin
+            vector = '1;
+        end
+        else begin
+            vector = {$urandom(),$urandom(),$urandom(),$urandom()};
+        end
+        $display("Sending random vector %0d: %h", i, vector);
         send_transaction(vector);
         repeat (2) @(posedge clk);
+        correct_mix_out = vec2mat(golden_model[i]);
         wait(done);
         is_mistake = (correct_mix_out != result);
         if (is_mistake) begin
             failed = failed +1;
         end
         else begin
-            passed = passed +1
+            passed = passed +1;
         end
         @(posedge clk);
     end
@@ -92,9 +118,9 @@ end
 
 /* When in RESET all outputs / registers must be 0 */
 property check_reset_clears_output;
-    @(posedge clk);
-    disable iff (!rst);
-    (dut.state == dut.RESET) |-> (dut.mix_out == '0 && dut.done_out == 0);
+    @(posedge clk)
+    //disable iff (!rst)
+    (dut.state == dut.RESET) |=> (dut.mix_out == zero_mat && dut.done_out == 0);
 endproperty
 
 assert property (check_reset_clears_output)
@@ -102,9 +128,9 @@ assert property (check_reset_clears_output)
 
 /* When done is high state shoud be CASE_3 */
 property check_done_on_case_3;
-    @(posedge clk);
-    disable iff (!rst);
-    dut.done_out |-> (dut.state == dut.CASE_3);
+    @(posedge clk)
+    disable iff (rst)
+    (dut.state == dut.CASE_3) |=> dut.done_out;
 endproperty
 
 assert property (check_done_on_case_3)
@@ -112,8 +138,8 @@ assert property (check_done_on_case_3)
 
 /* After state CASE_2 should come state CASE_3 */
 property check_fsm_transition;
-    @(posedge clk);
-    disable iff (!rst);
+    @(posedge clk)
+    disable iff (rst)
     (dut.state == dut.CASE_2) |=> (dut.state == dut.CASE_3);
 endproperty
 
@@ -144,10 +170,5 @@ endgroup
 
 fsm_states      cg_states = new();
 fsm_transitions cg_trans  = new();
-
-final begin
-    $display("states coverage %0.2f %%", cg_states.get_coverage());
-    $display("transaction coverage %0.2f %%", cg_trans.get_coverage());
-end
 
 endmodule
