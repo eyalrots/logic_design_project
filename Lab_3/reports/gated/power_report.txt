@@ -1,0 +1,55 @@
+Information: Updating design information... (UID-85)
+ 
+****************************************
+Report : power
+        -analysis_effort low
+Design : fsm
+Version: W-2024.09
+Date   : Tue Jan 13 16:58:32 2026
+****************************************
+
+
+Library(s) Used:
+
+    slow (File: /users_home/eyalroth/LibraryFiles/db/slow.db)
+
+
+Operating Conditions: slow   Library: slow
+Wire Load Model Mode: top
+
+
+Global Operating Voltage = 1.62 
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1pW
+
+
+Attributes
+----------
+i - Including register clock pin internal power
+
+
+  Cell Internal Power  =   1.3814 mW   (71%)
+  Net Switching Power  = 571.1147 uW   (29%)
+                         ---------
+Total Dynamic Power    =   1.9525 mW  (100%)
+
+Cell Leakage Power     =   2.4160 uW
+
+
+                 Internal         Switching           Leakage            Total
+Power Group      Power            Power               Power              Power   (   %    )  Attrs
+--------------------------------------------------------------------------------------------------
+io_pad             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+memory             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+black_box          0.0000            0.0000            0.0000            0.0000  (   0.00%)
+clock_network      0.7349        8.3842e-02        3.5264e+03            0.8187  (  41.88%)  i
+register       5.9563e-02        1.7523e-02        4.4178e+05        7.7528e-02  (   3.97%)
+sequential         0.0000            0.0000            0.0000            0.0000  (   0.00%)
+combinational      0.5869            0.4697        1.9707e+06            1.0586  (  54.15%)
+--------------------------------------------------------------------------------------------------
+Total              1.3814 mW         0.5711 mW     2.4160e+06 pW         1.9549 mW
+1

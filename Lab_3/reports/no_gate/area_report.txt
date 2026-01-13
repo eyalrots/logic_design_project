@@ -1,0 +1,45 @@
+ 
+****************************************
+Report : area
+Design : fsm
+Version: W-2024.09
+Date   : Tue Jan 13 15:39:51 2026
+****************************************
+
+Library(s) Used:
+
+    slow (File: /users_home/eyalroth/LibraryFiles/db/slow.db)
+
+Number of ports:                          265
+Number of nets:                          7332
+Number of cells:                         7067
+Number of combinational cells:           6804
+Number of sequential cells:               261
+Number of macros/black boxes:               0
+Number of buf/inv:                        896
+Number of references:                      54
+
+Combinational area:              88242.740644
+Buf/Inv area:                     5967.561675
+Noncombinational area:           14719.320370
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:                102962.061014
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area             Local cell area
+                                  --------------------  ------------------------------ 
+Hierarchical cell                 Absolute     Percent  Combi-      Noncombi-   Black-
+                                  Total        Total    national    national    boxes   Design
+--------------------------------  -----------  -------  ----------  ----------  ------  --------------------------
+fsm                               102962.0610    100.0  88216.1294  14646.1396  0.0000  fsm
+clk_gate_mix_mat_r_reg[0][0]          49.8960      0.0     13.3056     36.5904  0.0000  SNPS_CLOCK_GATE_HIGH_fsm_1
+clk_gate_sb_mat_reg[0][0]             49.8960      0.0     13.3056     36.5904  0.0000  SNPS_CLOCK_GATE_HIGH_fsm_0
+--------------------------------  -----------  -------  ----------  ----------  ------  --------------------------
+Total                                                   88242.7406  14719.3204  0.0000
+
+1

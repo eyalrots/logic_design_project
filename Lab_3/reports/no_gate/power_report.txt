@@ -1,0 +1,54 @@
+ 
+****************************************
+Report : power
+        -analysis_effort low
+Design : fsm
+Version: W-2024.09
+Date   : Tue Jan 13 15:36:01 2026
+****************************************
+
+
+Library(s) Used:
+
+    slow (File: /users_home/eyalroth/LibraryFiles/db/slow.db)
+
+
+Operating Conditions: slow   Library: slow
+Wire Load Model Mode: top
+
+
+Global Operating Voltage = 1.62 
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1pW
+
+
+Attributes
+----------
+i - Including register clock pin internal power
+
+
+  Cell Internal Power  =   1.4318 mW   (70%)
+  Net Switching Power  = 605.8094 uW   (30%)
+                         ---------
+Total Dynamic Power    =   2.0376 mW  (100%)
+
+Cell Leakage Power     =   2.3607 uW
+
+
+                 Internal         Switching           Leakage            Total
+Power Group      Power            Power               Power              Power   (   %    )  Attrs
+--------------------------------------------------------------------------------------------------
+io_pad             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+memory             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+black_box          0.0000            0.0000            0.0000            0.0000  (   0.00%)
+clock_network      0.7330        9.4134e-02        3.4889e+03            0.8272  (  40.55%)  i
+register           0.1132        2.6667e-02        3.8977e+05            0.1402  (   6.87%)
+sequential         0.0000            0.0000            0.0000            0.0000  (   0.00%)
+combinational      0.5856            0.4850        1.9674e+06            1.0726  (  52.58%)
+--------------------------------------------------------------------------------------------------
+Total              1.4318 mW         0.6058 mW     2.3607e+06 pW         2.0400 mW
+1

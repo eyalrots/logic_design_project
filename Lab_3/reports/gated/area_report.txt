@@ -1,0 +1,45 @@
+ 
+****************************************
+Report : area
+Design : fsm
+Version: W-2024.09
+Date   : Tue Jan 13 17:00:23 2026
+****************************************
+
+Library(s) Used:
+
+    slow (File: /users_home/eyalroth/LibraryFiles/db/slow.db)
+
+Number of ports:                          265
+Number of nets:                          7367
+Number of cells:                         7171
+Number of combinational cells:           6908
+Number of sequential cells:               261
+Number of macros/black boxes:               0
+Number of buf/inv:                        999
+Number of references:                      44
+
+Combinational area:              89403.654378
+Buf/Inv area:                     6646.147283
+Noncombinational area:           14077.325024
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:                103480.979402
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area             Local cell area
+                                  --------------------  ------------------------------ 
+Hierarchical cell                 Absolute     Percent  Combi-      Noncombi-   Black-
+                                  Total        Total    national    national    boxes   Design
+--------------------------------  -----------  -------  ----------  ----------  ------  --------------------------
+fsm                               103480.9794    100.0  89377.0432  14004.1442  0.0000  fsm
+clk_gate_mix_mat_r_reg[3][3]          49.8960      0.0     13.3056     36.5904  0.0000  SNPS_CLOCK_GATE_HIGH_fsm_1
+clk_gate_sb_mat_reg[3][3]             49.8960      0.0     13.3056     36.5904  0.0000  SNPS_CLOCK_GATE_HIGH_fsm_0
+--------------------------------  -----------  -------  ----------  ----------  ------  --------------------------
+Total                                                   89403.6544  14077.3250  0.0000
+
+1
