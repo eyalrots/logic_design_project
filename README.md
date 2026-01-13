@@ -1,4 +1,4 @@
-# Lab 2 - Verification
+# Logic Design Project
 
 ## DUT
 
