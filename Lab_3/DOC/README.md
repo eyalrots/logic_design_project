@@ -1,4 +1,5 @@
-# Lab 2 - Verification
+# Lab 3 - Synsethis
+This is the system overview.
 
 ## DUT
 
