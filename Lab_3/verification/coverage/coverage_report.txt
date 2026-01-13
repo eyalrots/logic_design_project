@@ -1,0 +1,62 @@
+COVERGROUP COVERAGE:
+----------------------------------------------------------------------------------------------------------
+Covergroup                                             Metric       Goal       Bins    Status               
+                                                                                                         
+----------------------------------------------------------------------------------------------------------
+ TYPE /tb_top/fsm_states                              100.00%        100          -    Covered              
+    covered/total bins:                                     4          4          -                      
+    missing/total bins:                                     0          4          -                      
+    % Hit:                                            100.00%        100          -                      
+    Coverpoint #coverpoint__0#                        100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+ Covergroup instance \/tb_top/cg_states               100.00%        100          -    Covered              
+    covered/total bins:                                     4          4          -                      
+    missing/total bins:                                     0          4          -                      
+    % Hit:                                            100.00%        100          -                      
+    Coverpoint #coverpoint__0#                        100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin reset_fsm                                      19          1          -    Covered              
+        bin case_1_fsm                                     17          1          -    Covered              
+        bin case_2_fsm                                     17          1          -    Covered              
+        bin case_3_fsm                                     50          1          -    Covered              
+ TYPE /tb_top/fsm_transitions                         100.00%        100          -    Covered              
+    covered/total bins:                                     4          4          -                      
+    missing/total bins:                                     0          4          -                      
+    % Hit:                                            100.00%        100          -                      
+    Coverpoint #coverpoint__0#                        100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+ Covergroup instance \/tb_top/cg_trans                100.00%        100          -    Covered              
+    covered/total bins:                                     4          4          -                      
+    missing/total bins:                                     0          4          -                      
+    % Hit:                                            100.00%        100          -                      
+    Coverpoint #coverpoint__0#                        100.00%        100          -    Covered              
+        covered/total bins:                                 4          4          -                      
+        missing/total bins:                                 0          4          -                      
+        % Hit:                                        100.00%        100          -                      
+        bin reset_to_case_1                                17          1          -    Covered              
+        bin case_1_to_case_2                               17          1          -    Covered              
+        bin case_2_to_case_3                               17          1          -    Covered              
+        bin case_3_to_reset                                16          1          -    Covered              
+
+TOTAL COVERGROUP COVERAGE: 100.00%  COVERGROUP TYPES: 2
+
+ASSERTION RESULTS:
+--------------------------------------------------------------------------------------------------------------------------------
+Name                 File(Line)                   Failure      Pass     Vacuous    Disable    Attempt     Active Peak Active ATV
+                                                  Count        Count    Count      Count      Count       Count  Count          
+--------------------------------------------------------------------------------------------------------------------------------
+/tb_top/assert__check_fsm_transition
+                     /users_home/eyalroth/Lab_2/TB/fsm_tb.sv(146)
+                                                        0         17         85          1        103          0           1 off
+/tb_top/assert__check_done_on_case_3
+                     /users_home/eyalroth/Lab_2/TB/fsm_tb.sv(136)
+                                                        0         32         53         17        103          1           2 off
+/tb_top/assert__check_reset_clears_output
+                     /users_home/eyalroth/Lab_2/TB/fsm_tb.sv(126)
+                                                        0         19         84          0        103          0           2 off
