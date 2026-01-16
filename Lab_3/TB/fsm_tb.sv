@@ -95,8 +95,10 @@ initial begin
         end
         $display("Sending random vector %0d: %h", i, vector);
         send_transaction(vector);
-        repeat (2) @(posedge clk);
-        correct_mix_out = vec2mat(golden_model[i]);
+	//repeat (2) @(posedge clk);
+	// introduce idle time for clock gating power improvemints
+        repeat (50) @posedge clk);
+	correct_mix_out = vec2mat(golden_model[i]);
         wait(done);
         is_mistake = (correct_mix_out != result);
 	$display("Is mistake = %0d", is_mistake);
